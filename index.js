@@ -110,10 +110,11 @@ app.get('/api/ratings', (req,res)=>{
 app.get('/api/quotes/:b_id', (req,res)=>{
     const b_id = Number(req.params.b_id);
     const bquotes = [];
+    //If given id matches b_id in quotes array, push it to bquotes and then display the quotes in response
     quotes.forEach(quote => quote.b_id === b_id ? bquotes.push(quote.quote): false);
     res.status(200).json({
         success:true,
-        title: books[id].title,
+        title: books[b_id].title,
         quotes: bquotes
     });
 });
@@ -133,7 +134,7 @@ app.get('/api/books/:id', (req,res)=>{
 //Req: title, author, year, month
 //Optional: none
 app.post('/api/books', (req,res)=>{
-    console.log(req.body);
+    //console.log(req.body);
     const [title, author, year, month]=[req.body.title,req.body.author,req.body.year,req.body.month];
     if(title && author && year && month) {
         //const title = req.body.title;
