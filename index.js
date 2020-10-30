@@ -45,7 +45,7 @@ const quotes = [
     {
         id: 2,
         b_id: 1,
-        quote: 'Most scary stories are, of course, meant to be told. They are more scary that way. But how you tell them is important.'
+        quote: 'Most scary stories are, of course, meant to be told. They are more scary that way. But _how_ you tell them is important.'
     },
     {
         id: 3,
