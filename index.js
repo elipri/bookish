@@ -3,11 +3,18 @@ const { title } = require("process");
 const { runInNewContext } = require("vm");
 const app = express();
 
+//kontrollerite teed
+const booksController = require('./api/controllers/booksController');
+const quotesController = require('./api/controllers/quotesController');
+const ratingsController = require('./api/controllers/ratingsController');
+
+//teenuste teed
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //DATA
-const books = [
+/* const books = [
   {
     id: 0,
     title: "The Disappearing Spoon",
@@ -29,9 +36,9 @@ const books = [
     year: 2020,
     month: 9
   },
-];
+]; */
 
-const quotes = [
+/* const quotes = [
     {
         id: 0,
         b_id: 0,
@@ -52,9 +59,9 @@ const quotes = [
         b_id: 2,
         quote: 'It isn\'t often that Aunt Dahlia lets her angry passions rise, but when she does, strong men climb trees and pull them up after them.'
     }
-]
+] */
 
-const ratings = [
+/* const ratings = [
     {
         id: 0,
         b_id: 0,
@@ -70,44 +77,52 @@ const ratings = [
         b_id: 2,
         rating: 8
     }
-]
+] */
 
 //REQUESTS
 
 //GET endpoint: books
 //Req: none
 //Optional: none
-app.get('/api/books', (req,res)=>{
+/* app.get('/api/books', (req,res)=>{
     res.status(200).json({
         success: true,
         books: books
     });
-});
+}); */
+app.get('/api/books', booksController.read);
+
 
 //GET endpoint: quotes
 //Req: none
 //Optional: none
-app.get('/api/quotes', (req,res)=>{
+/* app.get('/api/quotes', (req,res)=>{
     res.status(200).json({
         success: true,
         quotes: quotes
     });
-});
+}); */
+app.get('/api/quotes', quotesController.read);
+
+
 
 //GET endpoint: raitings
 //Req: none
 //Optional: none
-app.get('/api/ratings', (req,res)=>{
+/* app.get('/api/ratings', (req,res)=>{
     res.status(200).json({
         success: true,
         ratings: ratings
     });
-});
+}); */
+app.get('/api/ratings', ratingsController.read);
+
+
 
 //GET endpoint: quotes
 //Req: b_id
 //Optional: none
-app.get('/api/quotes/:b_id', (req,res)=>{
+/* app.get('/api/quotes/:b_id', (req,res)=>{
     const b_id = Number(req.params.b_id);
     const bquotes = [];
     //If given id matches b_id in quotes array, push it to bquotes and then display the quotes in response
@@ -117,23 +132,26 @@ app.get('/api/quotes/:b_id', (req,res)=>{
         title: books[b_id].title,
         quotes: bquotes
     });
-});
+}); */
+
+//app.get('/api/quotes/:b_id', quotesController);
 
 //GET endpoint: books
 //Req: id
 //Optional: none
-app.get('/api/books/:id', (req,res)=>{
+/* app.get('/api/books/:id', (req,res)=>{
     //console.log(books[req.params.id]);
     res.status(200).json({
         success: true,
         books: books[req.params.id]['title']
     });
-});
+}); */
+app.get('/api/books/:id', booksController.readid);
 
 //POST endpoint: books
 //Req: title, author, year, month
 //Optional: none
-app.post('/api/books', (req,res)=>{
+/* app.post('/api/books', (req,res)=>{
     //console.log(req.body);
     const [title, author, year, month]=[req.body.title,req.body.author,req.body.year,req.body.month];
     if(title && author && year && month) {
@@ -160,12 +178,13 @@ app.post('/api/books', (req,res)=>{
         });
     }
     
-});
+}); */
+app.post('/api/books', booksController.post);
 
 //PUT endpoint: books
 //Req: id
 //Optional: title, author, year, month
-app.put('/api/books', (req,res)=>{
+/* app.put('/api/books', (req,res)=>{
     const id = typeof(req.body.id) === 'number' ? req.body.id : false;
     const [title, author, year, month] = [
         typeof(req.body.title) === 'string' && req.body.title.trim().length > 0 ? req.body.title : false,
@@ -189,12 +208,14 @@ app.put('/api/books', (req,res)=>{
         });
     }
      
-});
+}); */
+app.put('/api/books', booksController.put);
+
 
 //DELETE endpoint: books
 //Req: id
 //Optional: none
-app.delete('/api/books', (req,res)=>{
+/* app.delete('/api/books', (req,res)=>{
     const id = typeof(req.body.id) === 'number' ? req.body.id : false;
     if (id || id === 0) {
         books.splice(id,1);
@@ -209,7 +230,8 @@ app.delete('/api/books', (req,res)=>{
             message: 'Something went wrong!'
         });
     }
-});
+}); */
+app.delete('/api/books', booksController.delete);
 
 
 //Start server
