@@ -1,3 +1,4 @@
+//@ts-check
 const booksService = require("../services/booksService");
 
 const booksController = {};
@@ -83,7 +84,7 @@ booksController.post = (req, res) => {
   }
 };
 
-//NB! uuendab, aga id uuendamisel ühe võrra nihkes!
+//ok
 booksController.put = (req, res) => {
   const id = typeof req.body.id === "number" ? req.body.id : false;
   if (id || id === 0) {
@@ -103,7 +104,7 @@ booksController.put = (req, res) => {
       title,
       author,
       year,
-      month,
+      month
     };
     const updatedBook = booksService.update(book);
     res.status(400).json({

@@ -1,9 +1,11 @@
+//@ts-check
 const express = require("express");
 //const { title } = require("process");
 //const { runInNewContext } = require("vm");
 const app = express();
 
 //controllers
+// @ts-ignore
 const pingController = require('./api/controllers/pingController');
 const booksController = require('./api/controllers/booksController');
 const quotesController = require('./api/controllers/quotesController');
