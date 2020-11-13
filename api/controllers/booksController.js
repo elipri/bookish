@@ -1,30 +1,8 @@
-/* const books = [
-    {
-      id: 0,
-      title: "The Disappearing Spoon",
-      author: "Sam Kean",
-      year: 2020,
-      month: 10
-    },
-    {
-      id: 1,
-      title: "Scary Stories to Tell in the Dark",
-      author: "Alvin Schwartz",
-      year: 2020,
-      month: 10
-    },
-    {
-      id: 2,
-      title: "Right Ho, Jeeves",
-      author: "P.G. Wodehouse",
-      year: 2020,
-      month: 9
-    },
-  ]; */
 const booksService = require("../services/booksService");
 
 const booksController = {};
 
+//ok
 booksController.read = (req, res) => {
   const books = booksService.read();
   res.status(200).json({
@@ -33,6 +11,7 @@ booksController.read = (req, res) => {
   });
 };
 
+//ok
 booksController.readid = (req, res) => {
   const bookId = req.params.id;
   const book = booksService.readById(bookId);
@@ -44,12 +23,12 @@ booksController.readid = (req, res) => {
   });
 };
 
+//ok
 booksController.delete = (req, res) => {
   //const books = booksService.read();
   //console.log(req.body.id);
   const id = typeof req.body.id === "number" ? req.body.id : false;
   if (id || id === 0) {
-
     const books = booksService.delete(id);
     //books.splice(id, 1);
     res.status(200).json({
@@ -65,16 +44,18 @@ booksController.delete = (req, res) => {
   }
 };
 
+//ok
 booksController.post = (req, res) => {
   const books = booksService.read();
   //console.log(req.body);
-  const [title, author, year, month] = [
+  const [title, author, year, month, userId] = [
     req.body.title,
     req.body.author,
     req.body.year,
     req.body.month,
+    req.body.userId
   ];
-  if (title && author && year && month) {
+  if (title && author && year && month && userId) {
     //const title = req.body.title;
 
     //console.log(title);
@@ -84,6 +65,7 @@ booksController.post = (req, res) => {
       author: author,
       year: year,
       month: month,
+      userId: userId
     };
     const newBook = booksService.create(book);
     //books.push(newBook);
@@ -91,7 +73,7 @@ booksController.post = (req, res) => {
     res.status(201).json({
       success: true,
       book: title,
-      books: books,
+      books: books
     });
   } else {
     res.status(400).json({
@@ -101,10 +83,10 @@ booksController.post = (req, res) => {
   }
 };
 
+//NB! uuendab, aga id uuendamisel ühe võrra nihkes!
 booksController.put = (req, res) => {
   const id = typeof req.body.id === "number" ? req.body.id : false;
   if (id || id === 0) {
-    
     const [title, author, year, month] = [
       typeof req.body.title === "string" && req.body.title.trim().length > 0
         ? req.body.title
@@ -125,13 +107,13 @@ booksController.put = (req, res) => {
     };
     const updatedBook = booksService.update(book);
     res.status(400).json({
-        success : true,
-        message: updatedBook
+      success: true,
+      message: updatedBook,
     });
   } else {
     res.status(400).json({
-        success: false,
-        message: 'Required fields missing/invalid'
+      success: false,
+      message: "Required fields missing/invalid",
     });
   }
 
@@ -153,5 +135,3 @@ booksController.put = (req, res) => {
 };
 
 module.exports = booksController;
-
-//mida vaja teha? kirjutada, kustutada, pärida, muuta
