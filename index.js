@@ -34,7 +34,7 @@ app.post('/api/books', booksController.post);
 app.put('/api/books', booksController.put);
 app.delete('/api/books', booksController.delete);
 
-//users for testing auth
+//users
 app.get('/api/users', usersController.read);
 app.get('/api/users/:id', usersController.readById);
 app.post('/api/users', usersController.create);

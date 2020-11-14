@@ -1,4 +1,4 @@
-const usersService = require('../services/usersService');
+const usersService = require('./usersService');
 const hashService = require('./hashService');
 const authService = {};
 
