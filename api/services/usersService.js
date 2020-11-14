@@ -1,10 +1,11 @@
+const hashService = require('./hashService');
 const users = [
     {
         id: 0,
         firstName: 'Elina',
         lastName: 'Prints',
         email: 'elina.prints@gmail.com',
-        password: 'elina'
+        password: '$2b$10$rTwyWGOg7EnQAbWasui1Iet1Ce885fjXp349aK0dMLWBLS7aknC1W'
     },
     {
         id: 1,
@@ -28,14 +29,17 @@ const users = [
   }
   
   //creating a new user
-  usersService.create = (user) => {
+  usersService.create = async(user) => {
     user.id = users.length;
+    user.password = await hashService.hash(user.password); //salvestab hashitud pw
+    console.log(user);
+    console.log(user.password);
     users.push(user);
   
     //new json from newUser for response
-    const userToReturn = { ... user };
+    const userToReturn = { ... user }; //deconstruct
     //remove pw
-    delete userToReturn.password;
+    //delete userToReturn.password;
   
     return userToReturn;
   }
@@ -65,6 +69,12 @@ const users = [
   usersService.delete = (id) => {
     users.splice(id, 1);
     return true;
+  }
+
+  //search user in users by email and return data
+  usersService.readByEmail = (email) => {
+    const user = users.find(user => user.email === email);
+    return user;
   }
   
   module.exports = usersService;

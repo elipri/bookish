@@ -11,6 +11,15 @@ const booksController = require('./api/controllers/booksController');
 const quotesController = require('./api/controllers/quotesController');
 const ratingsController = require('./api/controllers/ratingsController');
 const usersController = require('./api/controllers/usersController');
+const authController = require('./api/controllers/authController');
+
+const logging = (req,res, next) => {
+  console.log(req.headers);
+  console.log(new Date(), req.url/*, req.body.email*/); //ükskõik, mis päring tuleb, logi päringu aeg ja teekond
+  next();
+}
+
+app.use(logging); //ükskõik kuhu, kasuta logging
 
 //middleware for json
 app.use(express.json());
@@ -31,6 +40,8 @@ app.get('/api/users/:id', usersController.readById);
 app.post('/api/users', usersController.create);
 app.put('/api/users', usersController.update);
 app.delete('/api/users', usersController.delete);
+
+app.post('/api/login', authController.login);
 
 //ratings
 app.get('/api/ratings', ratingsController.read);
