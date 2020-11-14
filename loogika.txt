@@ -1,0 +1,28 @@
+users:
+    id
+    fname
+    lname
+    email
+    pw
+
+books:
+    id
+    title
+    author
+
+ratings:
+    id
+    rating
+
+userbooks:
+    id
+    date
+    u_id
+    b_id
+
+userratings:
+    id 
+    rating
+    b_id
+    u_id
+
