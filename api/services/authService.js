@@ -28,7 +28,7 @@ authService.login = async (email, password) => {
             const token = jwt.sign(
                 { email: user.email },
                 config.jwtSecret,
-                { expiresIn: 60*60 } // When will the token expire? In 60*60 seconds: 1h
+                { expiresIn: 60 * 60 } // When will the token expire? In 60*60 seconds: 1h
             );
             console.log(token); // Jwt.io - debugger: to check the contents
             return token;
