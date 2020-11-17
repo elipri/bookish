@@ -16,11 +16,8 @@ const ratingsController = require('./api/controllers/ratingsController');
 const usersController = require('./api/controllers/usersController');
 const authController = require('./api/controllers/authController');
 
-const logging = (req,res, next) => {
-  console.log(req.headers);
-  console.log(new Date(), req.url/*, req.body.email*/); //ükskõik, mis päring tuleb, logi päringu aeg ja teekond
-  next();
-}
+//my middleware
+const logging = require('./api/middleware/logging');
 
 app.use(logging); //ükskõik kuhu, kasuta logging
 
@@ -28,16 +25,11 @@ app.use(logging); //ükskõik kuhu, kasuta logging
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//routes:
+//ping
 app.get('/api/ping', pingController.ping);
 
-//books
-app.get('/api/books', booksController.read);
-app.get('/api/books/:id', booksController.readid);
-app.post('/api/books', booksController.post);
-app.put('/api/books', booksController.put);
-app.delete('/api/books', booksController.delete);
-
-//users
+//users+auth
 app.get('/api/users', usersController.read);
 app.get('/api/users/:id', usersController.readById);
 app.post('/api/users', usersController.create);
@@ -45,6 +37,13 @@ app.put('/api/users', usersController.update);
 app.delete('/api/users', usersController.delete);
 
 app.post('/api/login', authController.login);
+
+//books
+app.get('/api/books', booksController.read);
+app.get('/api/books/:id', booksController.readid);
+app.post('/api/books', booksController.post);
+app.put('/api/books', booksController.put);
+app.delete('/api/books', booksController.delete);
 
 //ratings
 app.get('/api/ratings', ratingsController.read);
