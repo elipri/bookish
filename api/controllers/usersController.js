@@ -2,6 +2,7 @@ const usersService = require('../services/usersService');
 const usersController = {};
 
 usersController.read = (req, res) => {
+    console.log(req.user); //kuna middleware muutis req objekti
     const users = usersService.read();
     //all users
     res.status(200).json({

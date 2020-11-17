@@ -18,6 +18,7 @@ const authController = require('./api/controllers/authController');
 
 //my middleware
 const logging = require('./api/middleware/logging');
+const isLoggedIn = require('./api/middleware/isLoggedIn');
 
 app.use(logging); //ükskõik kuhu, kasuta logging
 
@@ -26,17 +27,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //routes:
+//without token
 //ping
 app.get('/api/ping', pingController.ping);
 
-//users+auth
+//users
+app.post('/api/users', usersController.create);
+app.post('/api/login', authController.login);
+
+app.use(isLoggedIn);
+
+//with token
+//users
 app.get('/api/users', usersController.read);
 app.get('/api/users/:id', usersController.readById);
-app.post('/api/users', usersController.create);
 app.put('/api/users', usersController.update);
 app.delete('/api/users', usersController.delete);
-
-app.post('/api/login', authController.login);
 
 //books
 app.get('/api/books', booksController.read);

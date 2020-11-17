@@ -5,14 +5,14 @@ const users = [
         firstName: 'Elina',
         lastName: 'Prints',
         email: 'elina.prints@gmail.com',
-        password: '$2b$10$rTwyWGOg7EnQAbWasui1Iet1Ce885fjXp349aK0dMLWBLS7aknC1W'
+        password: '$2b$10$XMMlrUKPUOiebd.sFnjxeek1u9OdiMZhWWbdFjpuNEZO4.2RpqmuO' //elina
     },
     {
         id: 1,
         firstName: 'John',
         lastName: 'Smith',
         email: 'john@smith.com',
-        password: 'johnny'
+        password: '$2b$10$1zIop5OTzCftHXN43wkY1Oq6ATOYNaUErdxa43Lf8bRYAsWyr3PD2' //johnny
     }
   ];
   
