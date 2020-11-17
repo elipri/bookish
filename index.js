@@ -4,6 +4,9 @@ const express = require("express");
 //const { runInNewContext } = require("vm");
 const app = express();
 
+const config =  require('./config');
+const port =  config.port;
+
 //controllers
 // @ts-ignore
 const pingController = require('./api/controllers/pingController');
@@ -51,6 +54,6 @@ app.get('/api/quotes', quotesController.read);
 //app.get('/api/quotes/:b_id', quotesController);
 
 //start server
-app.listen(4000, () => {
+app.listen(port, () => {
   console.log("Server's running, yay.");
 });
