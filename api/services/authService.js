@@ -1,5 +1,7 @@
 const usersService = require('./usersService');
 const hashService = require('./hashService');
+const jwt = require('jsonwebtoken');
+const config = require('../../config');
 const authService = {};
 
 //req email, pw; return true/false
@@ -22,7 +24,14 @@ authService.login = async (email, password) => {
     if (user) {
         const match = await hashService.compare(password, user.password);
         if (match) {
-            return true;
+            // Generate token and return
+            const token = jwt.sign(
+                { email: user.email },
+                config.jwtSecret,
+                { expiresIn: 60*60 } // When will the token expire? In 60*60 seconds: 1h
+            );
+            console.log(token); // Jwt.io - debugger: to check the contents
+            return token;
         } else {
             return false;
         }
