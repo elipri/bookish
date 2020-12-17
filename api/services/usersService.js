@@ -1,4 +1,7 @@
 const hashService = require('./hashService');
+
+const db = require('../../db');
+
 const users = [
     {
         id: 0,
@@ -30,18 +33,23 @@ const users = [
   
   //creating a new user
   usersService.create = async(user) => {
-    user.id = users.length;
+    
+    //user.id = users.length;
     user.password = await hashService.hash(user.password); //salvestab hashitud pw
-    console.log(user);
+    const res = await db.collection('users').doc(user.email).set(user);
+    console.log(res);
+    /* console.log(user);
     console.log(user.password);
-    users.push(user);
+    users.push(user); */
   
     //new json from newUser for response
     const userToReturn = { ... user }; //deconstruct
+    
     //remove pw
-    //delete userToReturn.password;
+    delete userToReturn.password;
   
     return userToReturn;
+    //return res;
   }
   
   //updating existing user
