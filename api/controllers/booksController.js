@@ -1,80 +1,102 @@
 //@ts-check
 const booksService = require("../services/booksService");
-
 const booksController = {};
 
-//ok
-booksController.read = (req, res) => {
-  const books = booksService.read();
+//GET BOOKS
+booksController.read = async (req, res) => {
+  const userId = req.user;
+  const books = await booksService.read(userId);
   res.status(200).json({
     success: true,
     books: books,
   });
 };
 
-//ok
-booksController.readid = (req, res) => {
+//GET BOOK BY ID
+booksController.readid = async (req, res) => {
   const bookId = req.params.id;
-  const book = booksService.readById(bookId);
-  //console.log(books[req.params.id]);
-  res.status(200).json({
-    success: true,
-    //books: books[req.params.id]['title']
-    books: book["title"],
-  });
-};
-
-//ok
-booksController.delete = (req, res) => {
-  //const books = booksService.read();
-  //console.log(req.body.id);
-  const id = typeof req.body.id === "number" ? req.body.id : false;
-  if (id || id === 0) {
-    const books = booksService.delete(id);
-    //books.splice(id, 1);
+  const userId = req.user;
+  const book = await booksService.readById(bookId, userId);
+  if (book) {
     res.status(200).json({
       success: true,
-      message: "Book successfully deleted!",
-      books: books,
+      //books: books[req.params.id]['title']
+      book,
     });
   } else {
     res.status(400).json({
       success: false,
-      message: "Something went wrong!",
+      message: 'No such book found'
+  });
+  }
+  
+};
+
+//DELETE A BOOK
+booksController.delete = async (req, res) => {
+  //const books = booksService.read();
+  //console.log(req.body.id);
+  const bookId = typeof req.body.id === "string" ? req.body.id : false;
+  const userId = req.user;
+  if (bookId) {
+    const delbook = await booksService.delete(bookId, userId);
+    //books.splice(id, 1);
+    if (delbook) {
+      res.status(200).json({
+        success: true,
+        message: "Book successfully deleted!"
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: "No such book found!",
+      });
+    }
+    
+  } else {
+    res.status(400).json({
+      success: false,
+      message: "Required field(s) missing!",
     });
   }
 };
 
-//ok
-booksController.post = (req, res) => {
-  const books = booksService.read();
+//ADD A NEW BOOK
+booksController.post = async (req, res) => {
+  //const books = booksService.read();
   //console.log(req.body);
-  const [title, author, year, month, userId] = [
-    req.body.title,
-    req.body.author,
-    req.body.year,
-    req.body.month,
-    req.body.userId
-  ];
-  if (title && author && year && month && userId) {
+  /* const [title, author, userId] = [
+    typeof(req.body.title) === 'string' && req.body.title.trim().length > 0 ? req.body.title : false,
+    typeof(req.body.author) === 'string' && req.body.author.trim().length > 0 ? req.body.author : false,
+    req.user
+    /* req.body.year,
+    req.body.month, 
+    req.body.userId 
+  ]; */
+  const title = req.body.title;
+  const author = req.body.author;
+  //const userId = 'cVToTSqZEFaDyPezvdqf';
+  const userId = req.user;
+  console.log(title);
+  console.log(author);
+  console.log(userId);
+  if (title && author) {
     //const title = req.body.title;
 
     //console.log(title);
     const book = {
-      id: books.length,
       title: title,
-      author: author,
-      year: year,
-      month: month,
-      userId: userId
+      author: author
     };
-    const newBook = booksService.create(book);
+
+    const newBook = await booksService.create(book, userId);
     //books.push(newBook);
     console.log(newBook);
     res.status(201).json({
       success: true,
+      book: newBook/* ,
       book: title,
-      books: books
+      books: books */
     });
   } else {
     res.status(400).json({
@@ -84,33 +106,37 @@ booksController.post = (req, res) => {
   }
 };
 
-//ok
-booksController.put = (req, res) => {
-  const id = typeof req.body.id === "number" ? req.body.id : false;
-  if (id || id === 0) {
-    const [title, author, year, month] = [
-      typeof req.body.title === "string" && req.body.title.trim().length > 0
-        ? req.body.title
-        : false,
-      typeof req.body.author === "string" && req.body.author.trim().length > 0
-        ? req.body.author
-        : false,
-      typeof req.body.year === "number" ? req.body.year : false,
-      typeof req.body.month === "number" ? req.body.month : false,
-    ];
-
+//UPDATE A BOOK
+booksController.put = async (req, res) => {
+  const id = typeof req.body.id === "string" ? req.body.id : false;
+  const [title, author] = [
+    typeof req.body.title === "string" && req.body.title.trim().length > 0
+      ? req.body.title
+      : false,
+    typeof req.body.author === "string" && req.body.author.trim().length > 0
+      ? req.body.author
+      : false
+  ];
+  const userId = req.user;
+  if (id) {
     const book = {
       id,
       title,
-      author,
-      year,
-      month
+      author
     };
-    const updatedBook = booksService.update(book);
-    res.status(400).json({
-      success: true,
-      message: updatedBook,
+    const updatedBook = await booksService.update(book, userId);
+    if (updatedBook) {
+      res.status(400).json({
+        success: true,
+        updatedBook
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: 'Such book does not exists.'
     });
+    }
+    
   } else {
     res.status(400).json({
       success: false,

@@ -9,7 +9,7 @@ const isLoggedIn = (req,res,next) => {
         //kehtivuse kontroll?
         //console.log(verified);
         if(verified) {
-            req.user = verified.email; //middleware saab muuta req objekti ja annab selle edasi järgmistele controlleritele
+            req.user = verified.id; //middleware saab muuta req objekti ja annab selle edasi järgmistele controlleritele
             next();
         }
     } catch(error) {

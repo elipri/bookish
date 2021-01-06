@@ -1,4 +1,7 @@
-const books = [
+const { doc } = require("../../db");
+const db = require("../../db");
+
+/* const books = [
   {
     id: 0,
     title: "The Disappearing Spoon",
@@ -23,37 +26,64 @@ const books = [
     month: 9,
     userId: 0
   },
-];
+]; */
 
 booksService = {};
 
-booksService.read = () => {
+//GET USER'S BOOKS
+booksService.read = async (userId) => {
+  const snapshot =  await db.collection('users').doc(userId).collection('books').get();
+  const books = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
   return books;
 };
 
-booksService.readById = bookId => {
-  return books[bookId];
+//GET BOOK BY ID
+booksService.readById = async (bookId, userId) => {
+  const doc = await db.collection('users').doc(userId).collection('books').doc(bookId).get();
+  if (!doc.exists) {
+    return false;
+  }
+  const book = doc.data();
+  return book;
 };
 
-booksService.create = book => {
-  book.id = books.length;
+//ADD A NEW BOOK
+booksService.create = async (book, userId) => {
+  /* book.id = books.length;
   books.push(book);
   const bookToReturn = { ...book };
-  return bookToReturn;
+  return bookToReturn; */
+  //console.log('service: '+book+' & '+userId);
+  const doc = await db.collection('users').doc(userId).collection('books').add(book);
+  return doc.id;
 };
 
-booksService.update = book => {
-  book.title ? (books[book.id].title = book.title) : false;
-  book.author ? (books[book.id].author = book.author) : false;
-  book.year ? (books[book.id].year = book.year) : false;
-  book.month ? (books[book.id].month = book.month) : false;
-  const updatedBook = { ...books[book.id] };
+//UPDATE A BOOK
+booksService.update = async (book, userId) => {
+  const updatedBook = {};
+  book.title ? (updatedBook.title = book.title) : false;
+  book.author ? (updatedBook.author = book.author) : false;
+  //const updatedBook = { ...books[book.id] };
+  const doc =  await db.collection('users').doc(userId).collection('books').doc(book.id).get();
+  if (!doc.exists) {
+    return false;
+  }
+  await db.collection('users').doc(userId).collection('books').doc(book.id).update(updatedBook);
   return updatedBook;
 };
 
-booksService.delete = id => {
-  books.splice(id, 1);
-  return books;
+//DELETE A BOOK
+booksService.delete = async (bookId, userId) => {
+  //books.splice(id, 1);
+  const doc = await db.collection('users').doc(userId).collection('books').doc(bookId).get();
+  if (!doc.exists) {
+    return false;
+  }
+  await db.collection('users').doc(userId).collection('books').doc(bookId).delete();
+  return true;
 };
 
 module.exports = booksService;
