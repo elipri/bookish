@@ -20,17 +20,19 @@ const authService = {};
 } */
 
 authService.login = async (email, password) => {
-    const user = usersService.readByEmail(email);
+    const user = await usersService.readByEmail(email);
+    //console.log('authserv:'+user);
     if (user) {
         const match = await hashService.compare(password, user.password);
         if (match) {
             // Generate token and return
             const token = jwt.sign(
-                { email: user.email },
+                //{ email: user.email },
+                { id: user.id },
                 config.jwtSecret,
                 { expiresIn: 60 * 60 } // When will the token expire? In 60*60 seconds: 1h
             );
-            console.log(token); // Jwt.io - debugger: to check the contents
+            //console.log(token); // Jwt.io - debugger: to check the contents
             return token;
         } else {
             return false;

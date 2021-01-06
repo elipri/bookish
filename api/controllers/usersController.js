@@ -1,9 +1,11 @@
 const usersService = require('../services/usersService');
 const usersController = {};
 
-usersController.read = (req, res) => {
-    console.log(req.user); //kuna middleware muutis req objekti
-    const users = usersService.read();
+//READ ALL USERS
+usersController.read = async (req, res) => {
+    //console.log('user:'+req.user); //kuna middleware muutis req objekti
+    const users = await usersService.read();
+    //console.log(users);
     //all users
     res.status(200).json({
         success: true,
@@ -11,32 +13,44 @@ usersController.read = (req, res) => {
     });
 }
 
-usersController.readById = (req, res) => {
-    const userId = req.params.id;
+//READ USER BY ID
+usersController.readById = async (req, res) => {
+    //const userId = req.params.id;
+    const userId = typeof(req.params.id) === 'string' && req.params.id.trim().length > 5 ? req.params.id : false;
     if (userId) {
-        const user = usersService.readById(userId);
-        //return user with id
-        res.status(200).json({
-            success: true,
-            user: user
-        });
+        const user = await usersService.readById(userId);
+        if (user) {
+            //return user with id
+            res.status(200).json({
+                success: true,
+                user: user
+            });
+        } else {
+            //no user, return cannot find
+            res.status(400).json({
+                success: false,
+                message: 'No user found.'
+            });
+        }
+        
     } else {
         res.status(400).json({
             success: false,
-            message: 'No id provided'
+            message: 'No id given'
         });
     }
     
 }
 
+//CREATE A NEW USER
 usersController.create = async(req, res) => {
     const firstName = typeof(req.body.firstName) === 'string' && req.body.firstName.trim().length > 0 ? req.body.firstName : false;
     const lastName = typeof(req.body.lastName) === 'string' && req.body.lastName.trim().length > 0 ? req.body.lastName : false;
     const email = typeof(req.body.email) === 'string' && req.body.email.trim().length > 0 ? req.body.email : false;
     const password = typeof(req.body.password) === 'string' && req.body.password.trim().length > 2 ? req.body.password : false;
 
-    console.log(req.body);
-    console.log(firstName, lastName, email, password);
+    //console.log(req.body);
+    //console.log(firstName, lastName, email, password);
 
     if (firstName && lastName && email && password) {
         const user = {
@@ -61,10 +75,12 @@ usersController.create = async(req, res) => {
     }
 }
 
-usersController.update = (req, res) => {
-    const id = typeof(req.body.id) === 'number' ? req.body.id : false;
-    
-    if(id || id === 0) {
+//UPDATE USER
+usersController.update = async (req, res) => {
+    //const id = typeof(req.body.id) === 'number' ? req.body.id : false;
+    const id = typeof(req.body.id) === 'string' ? req.body.id : false;
+    console.log(id);
+    if(id) {
         const firstName = typeof(req.body.firstName) === 'string' && req.body.firstName.trim().length > 0 ? req.body.firstName : false;
         const lastName = typeof(req.body.lastName) === 'string' && req.body.lastName.trim().length > 0 ? req.body.lastName : false;
         const email = typeof(req.body.email) === 'string' && req.body.email.trim().length > 0 ? req.body.email : false;
@@ -77,13 +93,22 @@ usersController.update = (req, res) => {
             email,
             password
         };
-    
-        const updatedUser = usersService.update(user);
-            //updated user data
-            res.status(200).json({
-                success: true,
-                user: updatedUser
-            });
+        console.log(user);
+        //const updatedUser = await usersService.update(user);
+        const result = await usersService.update(user);
+            if (result) {
+                //updated user data
+                res.status(200).json({
+                    success: true
+                    //user: updatedUser
+                });
+            } else {
+                res.status(400).json({
+                    success: false,
+                    message: 'No such user found.'
+                });
+            }
+            
     }  else {
         //error message
         res.status(400).json({
@@ -93,14 +118,25 @@ usersController.update = (req, res) => {
     }
 }
 
-usersController.delete = (req, res) => {
-    const id = typeof(req.body.id) === 'number' ? req.body.id : false;
-    if(id || id === 0) {
-        const result = usersService.delete(id);
-        //success message
-        res.status(200).json({
-            success: result
-        });
+//DELETE USER
+usersController.delete = async (req, res) => {
+    //const id = typeof(req.body.id) === 'number' ? req.body.id : false;
+    const id = typeof(req.body.id) === 'string' ? req.body.id : false;
+    if(id) {
+        const result = await usersService.delete(id);
+        if (result) {
+            //success message
+            res.status(200).json({
+                success: result,
+                message: 'User by ID:'+id+' successfully deleted'
+            });
+        } else {
+            res.status(400).json({
+                success: false,
+                message: 'No such user!'
+            });
+        }
+        
     } else {
         //error message
         res.status(400).json({
