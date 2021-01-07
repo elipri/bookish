@@ -48,45 +48,104 @@ const books = [
 ]; */
 
 const quotesService = require("../services/quotesService");
-
 const quotesController = {};
 
-quotesController.read = (req, res) => {
-  const quotes = quotesService.read();
-  res.status(200).json({
-    success: true,
-    quotes: quotes,
-  });
-};
-
-
-//NB! Have to rethink it!
-//GET endpoint: quotes
-//Req: b_id
-//Optional: none
-/* app.get('/api/quotes/:b_id', (req,res)=>{
-    const b_id = Number(req.params.b_id);
-    const bquotes = [];
-    //If given id matches b_id in quotes array, push it to bquotes and then display the quotes in response
-    quotes.forEach(quote => quote.b_id === b_id ? bquotes.push(quote.quote): false);
+//READ QUOTES
+quotesController.read = async (req, res) => {
+  const userId = req.user;
+  const quotes = await quotesService.read(userId);
+  if (quotes) {
     res.status(200).json({
-        success:true,
-        title: books[b_id].title,
-        quotes: bquotes
+      success: true,
+      quotes: quotes,
     });
-}); */
-quotesController.get = (req, res) => {
-  const b_id = Number(req.params.b_id);
-  const bquotes = [];
-  //If given id matches b_id in quotes array, push it to bquotes and then display the quotes in response
-  quotes.forEach((quote) =>
-    quote.b_id === b_id ? bquotes.push(quote.quote) : false
-  );
-  res.status(200).json({
-    success: true,
-    title: books[b_id].title,
-    quotes: bquotes,
-  });
+  } else {
+    res.status(400).json({
+      success: 'Could not get any quotes. Time to add some!'
+    });
+  }
+  
 };
+
+//ADD QUOTES
+quotesController.post = async (req,res) => {
+  const quote = typeof(req.body.quote) === 'string' && req.body.quote.trim().length > 0 ? req.body.quote : false;
+  const bookId = typeof(req.body.bookId) === 'string' ? req.body.bookId : false;
+  const userId = req.user;
+  if (quote && bookId) {
+    const bookQuote = {
+      quote
+    }
+    const quoteGiven = await quotesService.post(bookQuote, bookId, userId);
+    if (quoteGiven) {
+      res.status(201).json({
+        success: true
+      });
+    } else {
+      res.status(400).json({
+        success: false
+      });
+    }
+  } else {
+    res.status(400).json({
+      success: false
+    });
+  }
+}
+
+//UPDATE QUOTES
+quotesController.update = async (req, res) => {
+  const bookId = typeof req.body.bookId === "string" ? req.body.bookId : false;
+  const quoteId = typeof req.body.quoteId === "string" ? req.body.quoteId : false;
+  const quote = typeof req.body.quote === "string" && req.body.quote.trim().length > 0 ? req.body.quote : false;
+  const userId = req.user;
+  if (bookId && quoteId && quote) {
+    const newQuote = {
+      quote
+    };
+    const updatedQuote = await quotesService.update(newQuote, bookId, quoteId, userId);
+    if (updatedQuote) {
+      res.status(201).json({
+        success: true,
+        updatedQuote
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: 'No such quote or book found!'
+      });
+    }
+  } else {
+    res.status(400).json({
+      success: false
+    });
+  }
+};
+
+//DELETE QUOTES
+quotesController.delete = async (req,res) => {
+  const bookId = typeof req.body.bookId === "string" ? req.body.bookId : false;
+  const quoteId = typeof req.body.quoteId === "string" ? req.body.quoteId : false;
+  const userId = req.user;
+  if (bookId && quoteId) {
+    console.log(bookId, quoteId, userId);
+    const delquote = await quotesService.delete(bookId, quoteId, userId);
+    if (delquote) {
+      res.status(200).json({
+        success: true,
+        message: "Quote successfully deleted!"
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: "No such books or quotes found!",
+      });
+    } 
+  } else {
+      res.status(400).json({
+        success: false
+      });
+  }
+}
 
 module.exports = quotesController;

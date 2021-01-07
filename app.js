@@ -59,6 +59,9 @@ app.delete('/api/ratings', ratingsController.delete);
 
 //quotes
 app.get('/api/quotes', quotesController.read);
+app.post('/api/quotes', quotesController.post);
+app.put('/api/quotes', quotesController.update);
+app.delete('/api/quotes', quotesController.delete);
 //app.get('/api/quotes/:b_id', quotesController);
 
 module.exports = app;

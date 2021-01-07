@@ -18,7 +18,6 @@
 
   const { doc } = require("../../db");
   const db = require('../../db');
-  const booksController = require("../controllers/booksController");
   ratingsService = {};
 
   //GET BOOK RATINGS
@@ -37,24 +36,29 @@
       const snap = await db.collection('users').doc(userId).collection('books').doc(book.id).collection('ratings').get();
       for (const doc of snap.docs) {
         bookRatings.push({
+          // id: doc.id,
           title: book.title,
           ...doc.data()
         });
       }
     }
-    console.log(bookRatings);
+    if (bookRatings.length < 1) {
+      return false;
+    }
     return bookRatings;
   };
 
-  //GET BOOK RATING BY BOOK ID
+  //GET BOOK RATING BY BOOK ID?
 
   //ADD BOOK RATINGS
   ratingsService.post = async (rating, bookId, userId) => {
-    //console.log('this runs');
     if(!rating, !bookId, !userId) return false;
-    //NB! CHECK IF RATING ALREADY EXISTS!
-
-
+    //NB! CHECK IF RATING ALREADY EXISTS & RETURN FALSE IF IT DOES!
+    const snap = await db.collection('users').doc(userId).collection('books').doc(bookId).collection('ratings').get();
+    if(!snap.empty) {
+      console.log(!snap.empty);
+      return false;
+    }
     const doc =  await db.collection('users').doc(userId).collection('books').doc(bookId).collection('ratings').add(rating);
     return doc.id;
   };
@@ -74,8 +78,6 @@
     ratingId = rs[0].id;
     await db.collection('users').doc(userId).collection('books').doc(bookId).collection('ratings').doc(ratingId).update(updatedRating);
     return updatedRating;
-    //const books = [];
-    //const bookRatings = [];
   }
 
   //DELETE BOOK RATINGS

@@ -25,9 +25,6 @@ ratingsController.post = async (req, res) => {
   const comment = typeof(req.body.comment) === 'string' && req.body.comment.trim().length > 0 ? req.body.comment : false;
   const bookId = typeof(req.body.bookId) === 'string' ? req.body.bookId : false;
   const userId = req.user;
-  console.log('this runs: '+userId+' bookId: '+bookId);
-  console.log(rating);
-  console.log(comment);
   if (rating && userId) {
     const bookRating = {
       rating,
@@ -40,7 +37,8 @@ ratingsController.post = async (req, res) => {
       });
     } else {
       res.status(400).json({
-        success: false
+        success: false,
+        message: 'No such book or book has already a rating!'
       });
     }
   } else {
@@ -62,13 +60,11 @@ ratingsController.update = async (req, res) => {
       : false
   ];
   const userId = req.user;
-  console.log(userId, bookId, rating, comment);
   if (bookId) {
     const newRating = {
       rating,
       comment
     };
-    console.log(newRating);
     const updatedBook = await ratingsService.update(newRating, bookId, userId);
     if (updatedBook) {
       res.status(201).json({
@@ -76,13 +72,13 @@ ratingsController.update = async (req, res) => {
         book: updatedBook
       });
     } else {
-      res.status(201).json({
+      res.status(400).json({
         success: false,
         message: 'No such book found!'
       });
     }
   } else {
-    res.status(201).json({
+    res.status(400).json({
       success: false
     });
   }
@@ -90,16 +86,15 @@ ratingsController.update = async (req, res) => {
 
 //GET RATING BY BOOK ID
 ratingsController.readByBookID = async (req, res) => {
-
+  const bookId = req.body.bookId;
 }
 
 //DELETE RATINGS
 ratingsController.delete = async (req, res) => {
-  const bookId = typeof req.body.id === "string" ? req.body.id : false;
+  const ratingId = typeof req.body.id === "string" ? req.body.id : false;
   const userId = req.user;
-  if (bookId) {
-    const delrating = await ratingsService.delete(bookId, userId);
-    //books.splice(id, 1);
+  if (ratingId) {
+    const delrating = await ratingsService.delete(ratingId, userId);
     if (delrating) {
       res.status(200).json({
         success: true,
