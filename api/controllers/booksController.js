@@ -126,7 +126,7 @@ booksController.put = async (req, res) => {
     };
     const updatedBook = await booksService.update(book, userId);
     if (updatedBook) {
-      res.status(400).json({
+      res.status(201).json({
         success: true,
         updatedBook
       });

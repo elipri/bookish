@@ -53,6 +53,9 @@ app.delete('/api/books', booksController.delete);
 
 //ratings
 app.get('/api/ratings', ratingsController.read);
+app.post('/api/ratings', ratingsController.post);
+app.put('/api/ratings', ratingsController.update);
+app.delete('/api/ratings', ratingsController.delete);
 
 //quotes
 app.get('/api/quotes', quotesController.read);
