@@ -52,11 +52,6 @@ booksService.readById = async (bookId, userId) => {
 
 //ADD A NEW BOOK
 booksService.create = async (book, userId) => {
-  /* book.id = books.length;
-  books.push(book);
-  const bookToReturn = { ...book };
-  return bookToReturn; */
-  //console.log('service: '+book+' & '+userId);
   const doc = await db.collection('users').doc(userId).collection('books').add(book);
   return doc.id;
 };
@@ -66,7 +61,6 @@ booksService.update = async (book, userId) => {
   const updatedBook = {};
   book.title ? (updatedBook.title = book.title) : false;
   book.author ? (updatedBook.author = book.author) : false;
-  //const updatedBook = { ...books[book.id] };
   const doc =  await db.collection('users').doc(userId).collection('books').doc(book.id).get();
   if (!doc.exists) {
     return false;
@@ -77,7 +71,6 @@ booksService.update = async (book, userId) => {
 
 //DELETE A BOOK
 booksService.delete = async (bookId, userId) => {
-  //books.splice(id, 1);
   const doc = await db.collection('users').doc(userId).collection('books').doc(bookId).get();
   if (!doc.exists) {
     return false;

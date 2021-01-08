@@ -3,16 +3,31 @@ const booksService = require("../services/booksService");
 const booksController = {};
 
 //GET BOOKS
+// GET
+// Required: none
+// Optional: none
+// Return: user's books
 booksController.read = async (req, res) => {
   const userId = req.user;
   const books = await booksService.read(userId);
-  res.status(200).json({
-    success: true,
-    books: books,
-  });
+  if (books) {
+    res.status(200).json({
+      success: true,
+      books: books,
+    });
+  } else {
+    res.status(400).json({
+      success: true,
+      books: books,
+    });
+  }
 };
 
 //GET BOOK BY ID
+// GET
+// Required: id
+// Optional: none
+// Return: book
 booksController.readid = async (req, res) => {
   const bookId = req.params.id;
   const userId = req.user;
@@ -20,7 +35,6 @@ booksController.readid = async (req, res) => {
   if (book) {
     res.status(200).json({
       success: true,
-      //books: books[req.params.id]['title']
       book,
     });
   } else {
@@ -33,14 +47,15 @@ booksController.readid = async (req, res) => {
 };
 
 //DELETE A BOOK
+// DELETE
+// Required: id
+// Optional: none
+// Return: success 200, fail 400
 booksController.delete = async (req, res) => {
-  //const books = booksService.read();
-  //console.log(req.body.id);
   const bookId = typeof req.body.id === "string" ? req.body.id : false;
   const userId = req.user;
   if (bookId) {
     const delbook = await booksService.delete(bookId, userId);
-    //books.splice(id, 1);
     if (delbook) {
       res.status(200).json({
         success: true,
@@ -62,42 +77,32 @@ booksController.delete = async (req, res) => {
 };
 
 //ADD A NEW BOOK
+// POST
+// Required: title, author
+// Optional: none
+// Return: book data
 booksController.post = async (req, res) => {
-  //const books = booksService.read();
-  //console.log(req.body);
-  /* const [title, author, userId] = [
-    typeof(req.body.title) === 'string' && req.body.title.trim().length > 0 ? req.body.title : false,
-    typeof(req.body.author) === 'string' && req.body.author.trim().length > 0 ? req.body.author : false,
-    req.user
-    /* req.body.year,
-    req.body.month, 
-    req.body.userId 
-  ]; */
   const title = req.body.title;
   const author = req.body.author;
-  //const userId = 'cVToTSqZEFaDyPezvdqf';
   const userId = req.user;
-  console.log(title);
-  console.log(author);
-  console.log(userId);
   if (title && author) {
-    //const title = req.body.title;
-
-    //console.log(title);
     const book = {
       title: title,
       author: author
     };
-
     const newBook = await booksService.create(book, userId);
-    //books.push(newBook);
-    console.log(newBook);
-    res.status(201).json({
-      success: true,
-      book: newBook/* ,
-      book: title,
-      books: books */
-    });
+    if (newBook) {
+      res.status(201).json({
+        success: true,
+        book: newBook
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: "Book could not be added",
+      });
+    }
+    
   } else {
     res.status(400).json({
       success: false,
@@ -107,6 +112,10 @@ booksController.post = async (req, res) => {
 };
 
 //UPDATE A BOOK
+// PUT
+// Required: id
+// Optional: title, author
+// Return: book data
 booksController.put = async (req, res) => {
   const id = typeof req.body.id === "string" ? req.body.id : false;
   const [title, author] = [
@@ -126,7 +135,7 @@ booksController.put = async (req, res) => {
     };
     const updatedBook = await booksService.update(book, userId);
     if (updatedBook) {
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         updatedBook
       });
@@ -143,22 +152,6 @@ booksController.put = async (req, res) => {
       message: "Required fields missing/invalid",
     });
   }
-
-  /* if(id || id === 0) {
-        title ? books[id].title = title : false;
-        author ? books[id].author = author : false;
-        year ? books[id].year = year : false;
-        month ? books[id].month = month : false;
-        res.status(400).json({
-            success : true,
-            message: books[id]
-        });
-    } else {
-        res.status(400).json({
-            success: false,
-            message: 'Required fields missing/invalid'
-        });
-    } */
 };
 
 module.exports = booksController;
