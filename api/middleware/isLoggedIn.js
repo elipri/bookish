@@ -20,7 +20,7 @@ const isLoggedIn = (req,res,next) => {
         } else {
             message = 'Invalid token!';
         }
-        res.status(402).json({
+        res.status(401).json({
             success: false,
             message: message
         });
