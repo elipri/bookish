@@ -92,5 +92,20 @@ const { doc } = require('../../db');
     await db.collection('users').doc(id).delete();
     return true;
   }
+
+  //search user in users by email and return data		
+  usersService.readByEmail = async (email) => {		
+    //const user = users.find(user => user.email === email);		
+    const snapshot =  await  db.collection('users').where('email', '==', email).get();		
+    if (snapshot.empty) {		
+      return;		
+    }		
+    const user = {		
+      id: snapshot.docs[0].id, //get user id		
+      ...snapshot.docs[0].data() //destructure and assign user data		
+    };		
+    console.log(user);		
+    return user;		
+  }
   
   module.exports = usersService;
