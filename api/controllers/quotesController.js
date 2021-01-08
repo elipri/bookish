@@ -51,6 +51,10 @@ const quotesService = require("../services/quotesService");
 const quotesController = {};
 
 //READ QUOTES
+// GET
+// Required: none
+// Optional: none
+// Return: quotes
 quotesController.read = async (req, res) => {
   const userId = req.user;
   const quotes = await quotesService.read(userId);
@@ -68,6 +72,10 @@ quotesController.read = async (req, res) => {
 };
 
 //ADD QUOTES
+// POST
+// Required: quote, bookId
+// Optional: none
+// Return: success 201, fail 400
 quotesController.post = async (req,res) => {
   const quote = typeof(req.body.quote) === 'string' && req.body.quote.trim().length > 0 ? req.body.quote : false;
   const bookId = typeof(req.body.bookId) === 'string' ? req.body.bookId : false;
@@ -94,6 +102,10 @@ quotesController.post = async (req,res) => {
 }
 
 //UPDATE QUOTES
+// PUT
+// Required: bookId, quoteId, quote
+// Optional: none
+// Return: quote data
 quotesController.update = async (req, res) => {
   const bookId = typeof req.body.bookId === "string" ? req.body.bookId : false;
   const quoteId = typeof req.body.quoteId === "string" ? req.body.quoteId : false;
@@ -123,6 +135,10 @@ quotesController.update = async (req, res) => {
 };
 
 //DELETE QUOTES
+// DELETE
+// Required: bookId, quoteId
+// Optional: none
+// Return: success 200, fail 400
 quotesController.delete = async (req,res) => {
   const bookId = typeof req.body.bookId === "string" ? req.body.bookId : false;
   const quoteId = typeof req.body.quoteId === "string" ? req.body.quoteId : false;

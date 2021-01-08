@@ -23,7 +23,7 @@
     },
   ]; */
 
-  const { doc } = require("../../db");
+  //const { doc } = require("../../db");
   const db = require('../../db');
   quotesService = {};
 
@@ -39,16 +39,19 @@
         ...doc.data()
       });
     }
+    console.log(books);
     for (const book of books) {
       const snap = await db.collection('users').doc(userId).collection('books').doc(book.id).collection('quotes').get();
       for (const doc of snap.docs) {
         bookQuotes.push({
           id: doc.id,
-          book: book.title,
+          bookId: book.id,
+          title: book.title,
           ...doc.data()
         });
       }
     }
+    console.log(bookQuotes);
     if (bookQuotes.length < 1) {
       return false;
     }
@@ -57,7 +60,6 @@
 
   //ADD A QUOTE
   quotesService.post = async (quote, bookId, userId) => {
-    //console.log('this runs');
     if(!quote, !bookId, !userId) return false;
     const doc =  await db.collection('users').doc(userId).collection('books').doc(bookId).collection('quotes').add(quote);
     return doc.id;
