@@ -16,7 +16,7 @@
     },
   ]; */
 
-  const { doc } = require("../../db");
+  //const { doc } = require("../../db");
   const db = require('../../db');
   ratingsService = {};
 
@@ -36,7 +36,7 @@
       const snap = await db.collection('users').doc(userId).collection('books').doc(book.id).collection('ratings').get();
       for (const doc of snap.docs) {
         bookRatings.push({
-          // id: doc.id,
+          //id: doc.id,
           title: book.title,
           ...doc.data()
         });
@@ -69,12 +69,20 @@
     const updatedRating = {};
     rating.rating ? (updatedRating.rating = rating.rating) : false;
     rating.comment ? (updatedRating.comment = rating.comment) : false;
-    console.log(bookId, userId);
+    const book = await db.collection('users').doc(userId).collection('books').doc(bookId).get();
+    //does book exist?
+    if (!book.exists) {
+      return false;
+    }
     const snap = await db.collection('users').doc(userId).collection('books').doc(bookId).collection('ratings').get();
+    if (snap.empty) {
+      return false;
+    }
     const rs = snap.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }));
+    console.log(rs);
     ratingId = rs[0].id;
     await db.collection('users').doc(userId).collection('books').doc(bookId).collection('ratings').doc(ratingId).update(updatedRating);
     return updatedRating;
